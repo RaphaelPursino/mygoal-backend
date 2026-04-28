@@ -21,6 +21,12 @@ public interface MissionRepository extends JpaRepository<Mission, UUID> {
 
     boolean existsByGoalIdAndMissionDate(UUID goalId, LocalDate date);
 
-    @Query("SELECT COUNT(m) FROM Mission m WHERE m.goal.id = :goalId AND m.completed = true")
-    long countCompletedByGoalId(UUID goalId);
+    @Query("""
+    SELECT m FROM Mission m
+    WHERE m.goal.id = :goalId
+    AND m.missionDate < :date
+    AND m.completed = false
+    ORDER BY m.missionDate ASC, m.createdAt ASC
+""")
+    List<Mission> findPendingMissionsBeforeDate(UUID goalId, LocalDate date);
 }
