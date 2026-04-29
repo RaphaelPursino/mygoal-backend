@@ -26,7 +26,7 @@ public class NotificationScheduler {
     private final GoalService goalService;
 
     // Envia e-mails motivacionais de hora em hora das 8h às 22h
-    @Scheduled(cron = "0 0 8-22 * * *")
+    @Scheduled(cron = "0 0 8,13,20 * * *")
     public void sendHourlyMotivationalEmails() {
         log.info("Iniciando envio de e-mails motivacionais...");
 

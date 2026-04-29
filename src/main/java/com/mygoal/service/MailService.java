@@ -47,6 +47,7 @@ public class MailService {
                     .build());
 
             log.info("E-mail motivacional enviado para: {}", user.getEmail());
+            log.info("Tentando enviar e-mail para: {} sobre meta: {}", user.getEmail(), goal.getTitle());
 
         } catch (Exception e) {
             log.error("Erro ao enviar e-mail para {}: {}", user.getEmail(), e.getMessage());
