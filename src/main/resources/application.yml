@@ -45,6 +45,9 @@ spring:
           starttls:
             enable: true
 
+  jackson:
+    time-zone: America/Sao_Paulo
+
 app:
   jwt:
     secret: ${JWT_SECRET}
