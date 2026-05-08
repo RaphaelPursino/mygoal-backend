@@ -8,7 +8,7 @@ import com.mygoal.service.GoalService;
 import com.mygoal.service.MissionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,7 +20,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/goals")
 @RequiredArgsConstructor
-@Slf4j
 public class GoalController {
 
     private final GoalService goalService;
@@ -28,8 +27,6 @@ public class GoalController {
 
     private User getCurrentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        log.debug("Authentication: {}", auth);
-        log.debug("Principal: {}", auth != null ? auth.getPrincipal() : "null");
         if (auth == null || !auth.isAuthenticated()) {
             throw new RuntimeException("Usuário não autenticado");
         }
@@ -43,8 +40,8 @@ public class GoalController {
 
     @PostMapping
     public ResponseEntity<GoalResponse> create(@Valid @RequestBody GoalRequest req) {
-        log.debug("Criando meta: {}", req.getTitle());
-        return ResponseEntity.ok(goalService.create(getCurrentUser(), req));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(goalService.create(getCurrentUser(), req));
     }
 
     @GetMapping("/{id}")

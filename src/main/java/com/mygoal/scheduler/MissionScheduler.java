@@ -13,30 +13,32 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class NotificationScheduler {
+public class MissionScheduler {
 
     private final GoalRepository goalRepository;
     private final GoalService goalService;
 
     @Scheduled(cron = "0 0 6 * * *")
     public void generateDailyMissions() {
-        log.info("Gerando missões diárias...");
+        log.info("Iniciando geração de missões diárias...");
 
         List<Goal> activeGoals = goalRepository.findAll()
                 .stream()
                 .filter(g -> g.getStatus() == Goal.GoalStatus.ACTIVE)
                 .toList();
 
+        int success = 0;
         for (Goal goal : activeGoals) {
             try {
                 goalService.generateMissionsForToday(goal);
                 goal.setTotalMissions(goal.getTotalMissions() + 3);
                 goalRepository.save(goal);
+                success++;
             } catch (Exception e) {
                 log.error("Erro ao gerar missões para meta {}: {}", goal.getId(), e.getMessage());
             }
         }
 
-        log.info("Missões diárias geradas para {} metas.", activeGoals.size());
+        log.info("Missões geradas com sucesso para {}/{} metas.", success, activeGoals.size());
     }
 }
