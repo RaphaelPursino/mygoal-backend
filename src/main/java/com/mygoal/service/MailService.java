@@ -30,6 +30,7 @@ public class MailService {
 
     @Async
     public void sendWelcomeEmail(User user) {
+        log.info("Iniciando envio de e-mail de boas-vindas para: {}", user.getEmail());
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
@@ -40,10 +41,11 @@ public class MailService {
             helper.setText(buildWelcomeEmailHtml(user.getName()), true);
 
             mailSender.send(message);
-            log.info("E-mail de boas-vindas enviado para: {}", user.getEmail());
+            log.info("E-mail de boas-vindas enviado com sucesso para: {}", user.getEmail());
 
         } catch (Exception e) {
-            log.error("Erro ao enviar e-mail de boas-vindas para {}: {}", user.getEmail(), e.getMessage());
+            log.error("Erro ao enviar e-mail de boas-vindas para {}: {}",
+                    user.getEmail(), e.getMessage(), e);
         }
     }
 
