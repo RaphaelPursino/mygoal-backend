@@ -34,9 +34,9 @@ spring:
             redirect-uri: "{baseUrl}/login/oauth2/code/google"
 
   mail:
-    host: smtp.gmail.com
+    host: smtp.sendgrid.net
     port: 587
-    username: ${MAIL_USERNAME}
+    username: apikey
     password: ${MAIL_PASSWORD}
     properties:
       mail:
