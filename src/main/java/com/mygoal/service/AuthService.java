@@ -6,6 +6,7 @@ import com.mygoal.dto.auth.RegisterRequest;
 import com.mygoal.entity.User;
 import com.mygoal.repository.UserRepository;
 import com.mygoal.security.JwtService;
+import com.mygoal.service.MailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -32,8 +33,6 @@ public class AuthService {
                 .build();
 
         userRepository.save(user);
-
-        // Envia e-mail de boas-vindas de forma assíncrona
         mailService.sendWelcomeEmail(user);
 
         String token = jwtService.generateToken(user.getId(), user.getEmail());
@@ -44,5 +43,20 @@ public class AuthService {
                 .build();
     }
 
-    // login continua igual...
+    public AuthResponse login(LoginRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("E-mail ou senha inválidos"));
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
+            throw new RuntimeException("E-mail ou senha inválidos");
+        }
+
+        String token = jwtService.generateToken(user.getId(), user.getEmail());
+        return AuthResponse.builder()
+                .token(token)
+                .name(user.getName())
+                .email(user.getEmail())
+                .avatarUrl(user.getAvatarUrl())
+                .build();
+    }
 }
