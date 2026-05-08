@@ -1,12 +1,8 @@
 package com.mygoal.scheduler;
 
 import com.mygoal.entity.Goal;
-import com.mygoal.entity.User;
 import com.mygoal.repository.GoalRepository;
-import com.mygoal.repository.UserRepository;
-import com.mygoal.service.AIService;
 import com.mygoal.service.GoalService;
-import com.mygoal.service.MailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -19,40 +15,9 @@ import java.util.List;
 @Slf4j
 public class NotificationScheduler {
 
-    private final UserRepository userRepository;
     private final GoalRepository goalRepository;
-    private final AIService aiService;
-    private final MailService mailService;
     private final GoalService goalService;
 
-    // Manhã: 8h, Tarde: 13h, Noite: 20h (horário de Brasília = UTC-3)
-// No Render (UTC): 11h, 16h, 23h
-    @Scheduled(cron = "0 0 11,16,23 * * *")
-    public void sendMotivationalEmails() {
-        log.info("Iniciando envio de e-mails motivacionais...");
-
-        List<User> users = userRepository.findUsersWithActiveGoals();
-        log.info("Usuários com metas ativas: {}", users.size());
-
-        for (User user : users) {
-            try {
-                List<Goal> activeGoals = goalRepository.findActiveGoalsByUserId(user.getId());
-                if (activeGoals.isEmpty()) continue;
-
-                Goal goal = activeGoals.get(0);
-                String phrase = aiService.generateMotivationalPhrase(goal);
-                mailService.sendMotivationalEmail(user, goal, phrase);
-
-            } catch (Exception e) {
-                log.error("Erro ao processar notificação para {}: {}",
-                        user.getEmail(), e.getMessage());
-            }
-        }
-
-        log.info("Envio de e-mails motivacionais concluído.");
-    }
-
-    // Gera missões do dia para todas as metas ativas às 6h da manhã
     @Scheduled(cron = "0 0 6 * * *")
     public void generateDailyMissions() {
         log.info("Gerando missões diárias...");

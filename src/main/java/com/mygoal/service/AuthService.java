@@ -6,7 +6,6 @@ import com.mygoal.dto.auth.RegisterRequest;
 import com.mygoal.entity.User;
 import com.mygoal.repository.UserRepository;
 import com.mygoal.security.JwtService;
-import com.mygoal.service.MailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,7 +17,6 @@ public class AuthService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
-    private final MailService mailService;
 
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
@@ -33,7 +31,6 @@ public class AuthService {
                 .build();
 
         userRepository.save(user);
-        mailService.sendWelcomeEmail(user);
 
         String token = jwtService.generateToken(user.getId(), user.getEmail());
         return AuthResponse.builder()

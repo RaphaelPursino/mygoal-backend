@@ -1,9 +1,8 @@
-package com.mygoal.oauth2;
+package com.mygoal.security;
 
 import com.mygoal.entity.User;
 import com.mygoal.repository.UserRepository;
 import com.mygoal.security.JwtService;
-import com.mygoal.service.MailService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +24,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     private final UserRepository userRepository;
     private final JwtService jwtService;
-    private final MailService mailService;
 
     @Value("${app.frontend-url}")
     private String frontendUrl;
@@ -40,8 +38,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String name = oAuth2User.getAttribute("name");
         String googleId = oAuth2User.getAttribute("sub");
         String avatarUrl = oAuth2User.getAttribute("picture");
-
-        boolean isNewUser = !userRepository.existsByEmail(email);
 
         User user = userRepository.findByEmail(email).orElseGet(() -> {
             User newUser = User.builder()
@@ -60,15 +56,11 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             userRepository.save(user);
         }
 
-        // Envia e-mail de boas-vindas apenas para novos usuários
-        if (isNewUser) {
-            mailService.sendWelcomeEmail(user);
-        }
-
         String token = jwtService.generateToken(user.getId(), user.getEmail());
         String redirectUrl = frontendUrl + "/auth/callback?token=" +
                 URLEncoder.encode(token, StandardCharsets.UTF_8);
 
+        log.info("OAuth2 login bem-sucedido para: {}", email);
         getRedirectStrategy().sendRedirect(request, response, redirectUrl);
     }
 }
