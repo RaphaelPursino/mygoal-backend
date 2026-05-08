@@ -25,9 +25,10 @@ public class NotificationScheduler {
     private final MailService mailService;
     private final GoalService goalService;
 
-    // Envia e-mails motivacionais de hora em hora das 8h às 22h
-    @Scheduled(cron = "0 0 8,13,20 * * *")
-    public void sendHourlyMotivationalEmails() {
+    // Manhã: 8h, Tarde: 13h, Noite: 20h (horário de Brasília = UTC-3)
+// No Render (UTC): 11h, 16h, 23h
+    @Scheduled(cron = "0 0 11,16,23 * * *")
+    public void sendMotivationalEmails() {
         log.info("Iniciando envio de e-mails motivacionais...");
 
         List<User> users = userRepository.findUsersWithActiveGoals();
@@ -43,11 +44,12 @@ public class NotificationScheduler {
                 mailService.sendMotivationalEmail(user, goal, phrase);
 
             } catch (Exception e) {
-                log.error("Erro ao processar notificação para {}: {}", user.getEmail(), e.getMessage());
+                log.error("Erro ao processar notificação para {}: {}",
+                        user.getEmail(), e.getMessage());
             }
         }
 
-        log.info("Envio de e-mails concluído.");
+        log.info("Envio de e-mails motivacionais concluído.");
     }
 
     // Gera missões do dia para todas as metas ativas às 6h da manhã
