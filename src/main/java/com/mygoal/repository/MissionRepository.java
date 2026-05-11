@@ -15,8 +15,6 @@ public interface MissionRepository extends JpaRepository<Mission, UUID> {
 
     List<Mission> findByGoalIdAndMissionDateOrderByCreatedAtAsc(UUID goalId, LocalDate date);
 
-    List<Mission> findByGoalIdOrderByMissionDateDescCreatedAtAsc(UUID goalId);
-
     Optional<Mission> findByIdAndGoalUserId(UUID missionId, UUID userId);
 
     boolean existsByGoalIdAndMissionDate(UUID goalId, LocalDate date);

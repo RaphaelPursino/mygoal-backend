@@ -1,6 +1,5 @@
 package com.mygoal.security;
 
-import com.mygoal.security.OAuth2SuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

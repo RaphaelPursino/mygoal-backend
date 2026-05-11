@@ -27,6 +27,11 @@ public class MissionScheduler {
                 .filter(g -> g.getStatus() == Goal.GoalStatus.ACTIVE)
                 .toList();
 
+        if (activeGoals.isEmpty()) {
+            log.info("Nenhuma meta ativa encontrada.");
+            return;
+        }
+
         int success = 0;
         for (Goal goal : activeGoals) {
             try {

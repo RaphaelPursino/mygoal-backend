@@ -15,8 +15,6 @@ public interface GoalRepository extends JpaRepository<Goal, UUID> {
 
     List<Goal> findByUserIdOrderByCreatedAtDesc(UUID userId);
 
-    List<Goal> findByUserIdAndStatus(UUID userId, Goal.GoalStatus status);
-
     Optional<Goal> findByIdAndUserId(UUID id, UUID userId);
 
     @Query("""
